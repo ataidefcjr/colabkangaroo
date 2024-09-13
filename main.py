@@ -13,8 +13,8 @@ def selecionar_range():
     public_key = '03633cbe3ec02b9401c5effa144c5b4d22f87940259634858fc7e59b1c09937852'
     start = int('200000000000000000000000000000000', 16)
     end = int('3ffffffffffffffffffffffffffffffff', 16)
-    partes = 5_000_0000
-    parte = int(input(f'\nDica: Você pode usar "_" para melhor visualização. Por exemplo: 11_111_111.\nDigite uma parte a ser procurada entre 1 e {partes}, ou 0 para uma parte aleatória: '))
+    partes = 500_000_000
+    parte = int(input(f'\nDica: Você pode usar "_" para melhor visualização. Por exemplo: 100_000_000.\nDigite uma parte a ser procurada entre 1 e {partes}, ou 0 para uma parte aleatória: '))
     if parte == 0:
         parte = random.randint(1,partes)
         print(f'----------------------------\nAnote a parte gerada aleatória: {parte}\n----------------------------')
