@@ -205,7 +205,7 @@ def main():
     )   
     parser.add_argument('-d', '--destination', type=str, required=False, help="Informe sua Carteira para transferir automaticamente se encontrada a chave privada.")
     parser.add_argument('-m', '--mode', type=str, choices=['1', '2'], required=False, help="Informe o modo (1 ou 2)")
-    parser.add_argument('-p', '--parte', type=int, choices=range(1,513)), required=False, help="Selecione uma parte entre 1 e 16. (Obrigatório ao usar o modo 2)"
+    parser.add_argument('-p', '--parte', type=int, choices=range(1,513), required=False, help="Selecione uma parte entre 1 e 16. (Obrigatório ao usar o modo 2)")
 
     args = parser.parse_args()
 
