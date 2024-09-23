@@ -9,10 +9,11 @@ import base58
 import argparse
 import shutil
 
+public_key = '02145d2611c823a396ef6712ce0f712f09b9b4f3135e3e0aa3230fb9b6d08d1e16'
+
 def selecionar_range():
-    public_key = '03633cbe3ec02b9401c5effa144c5b4d22f87940259634858fc7e59b1c09937852'
-    start = int('200000000000000000000000000000000', 16)
-    end = int('3ffffffffffffffffffffffffffffffff', 16)
+    start = int('4000000000000000000000000000000000', 16)
+    end = int('7fffffffffffffffffffffffffffffffff', 16)
     partes = 500_000_000
     parte = int(input(f'\nDica: Você pode usar "_" para melhor visualização. Por exemplo: 100_000_000.\nDigite uma parte a ser procurada entre 1 e {partes}, ou 0 para uma parte aleatória: '))
     if parte == 0:
@@ -27,14 +28,14 @@ def selecionar_range():
     if parte  == partes:
         fim_selecionado = end
 
-    with open('130.txt', 'w') as file:
+    with open('135.txt', 'w') as file:
         file.write(f"{hex(inicio_selecionado)[2:]}\n")
         file.write(f"{hex(fim_selecionado)[2:]}\n")
         file.write(f"{public_key}")
 
 def iniciar_busca():
     path = './kangaroo'
-    argumentos = '-gpu -g 80,128 -t 4 -o KFound.txt 130.txt'
+    argumentos = '-gpu -g 80,128 -t 4 -o KFound.txt 135.txt'
     comando = f"{path} {argumentos}"
     print(comando)
     try: 
@@ -77,8 +78,8 @@ def transferir(wif, destino):
         print (f'Ocorreu um erro: {e}')
 
 def verifica_saldo():
-    endereco = '1Fo65aKq8s8iquMt6weF1rku1moWVEd5Ua'
-    print('Verificando saldo da carteira 130, aguarde...')
+    endereco = '16RGFo6hjq9ym6Pj7N5H7L1NR1rVPJyw2v'
+    print('Verificando saldo da carteira 135, aguarde...')
     try:
         saldo = network.NetworkAPI.get_balance(endereco) / 1e8
 
@@ -181,12 +182,12 @@ def busca_completa_com_save():
     if os.path.exists('save.work'):
         argumentos = '-gpu -g 80,128 -t 4 -ws -w save.work -wi 60 -o KFound.txt -i save.work'
     else:
-        argumentos = f'-gpu -g 80,128 -t 4 -ws -w save.work -wi 60 -o KFound.txt ranges/130-{parte}.txt'
+        argumentos = f'-gpu -g 80,128 -t 4 -ws -w save.work -wi 60 -o KFound.txt ranges/135-{parte}.txt'
 
     comando = f"{path} {argumentos}"
     print(comando)
     try: 
-        print(f"Iniciando busca na parte {parte}/16")
+        print(f"Iniciando busca na parte {parte}/512")
         subprocess.Popen(comando, shell=True)
     except Exception as e:
         print(f'Erro: {e}')
@@ -194,7 +195,7 @@ def busca_completa_com_save():
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "Bot para pesquisar a chave do puzzle 130\n"
+            "Bot para pesquisar a chave do puzzle 135\n"
             "Criado por Ataide Freitas\n"
             "https://github.com/ataidefcjr/colabkangaroo\n"
             "Doações: bc1qych3lyjyg3cse6tjw7m997ne83fyye4des99a9\n"
@@ -202,10 +203,9 @@ def main():
         ),
         formatter_class=argparse.RawTextHelpFormatter
     )   
-    partes = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16']
     parser.add_argument('-d', '--destination', type=str, required=False, help="Informe sua Carteira para transferir automaticamente se encontrada a chave privada.")
     parser.add_argument('-m', '--mode', type=str, choices=['1', '2'], required=False, help="Informe o modo (1 ou 2)")
-    parser.add_argument('-p', '--parte', type=str, choices=partes, required=False, help="Selecione uma parte entre 1 e 16. (Obrigatório ao usar o modo 2)")
+    parser.add_argument('-p', '--parte', type=str, choices=range(1,513)), required=False, help="Selecione uma parte entre 1 e 16. (Obrigatório ao usar o modo 2)"
 
     args = parser.parse_args()
 
@@ -218,16 +218,22 @@ def main():
     if not my_wallet:
         my_wallet = input('Se encontrar a chave o bot tentara realizar a transfernecia para a sua carteira\nCole o endereço da sua carteira: ')
     if not selecionar:
-        selecionar = input('\n-------\n1 - Selecionar um número entre 1 e 50 milhoes.\n2 - Fazer a busca em todo o range da carteira 130 com save automático.\n-------Selecione uma opção: ')
+        selecionar = input('\n-------\n1 - Selecionar um número entre 1 e 500 milhoes.\n2 - Fazer a busca em todo o range da carteira 135 com save automático.\n-------Selecione uma opção: ')
     if selecionar == '1':
         selecionar_range()
         iniciar_busca()
     elif selecionar == '2':
         if not parte:
-            parte = input('Insira um numero de 1 a 16: ')
-        if parte not in partes:
+            try:
+                parte = int(input('Insira um número de 1 a 512: '))
+            except ValueError:
+                print('Entrada inválida, por favor insira um número.')
+                quit()
+
+        if parte not in range(1, 513):
             print('Parte inválida, encerrando.')
             quit()
+
         print(f'Parte selecionada: {parte}')
         busca_completa_com_save()
     else:
